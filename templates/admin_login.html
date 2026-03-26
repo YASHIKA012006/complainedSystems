@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login | College Complaint Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='adminlogin.css') }}">
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-left">
+            <h1>Admin Portal</h1>
+            <p>Access the administrative dashboard to manage student complaints and system settings.</p>
+            
+            <ul class="features">
+                <li><i class="fas fa-check"></i> View and manage all complaints</li>
+                <li><i class="fas fa-check"></i> Update complaint status</li>
+                <li><i class="fas fa-check"></i> Generate detailed reports</li>
+                <li><i class="fas fa-check"></i> Manage user accounts</li>
+                <li><i class="fas fa-check"></i> System analytics dashboard</li>
+            </ul>
+        </div>
+        
+        <div class="login-right">
+            <div class="login-header">
+                <h2>Admin Login</h2>
+                <p>Enter your credentials to access the dashboard</p>
+            </div>
+            
+            <form method="POST" action="/admin" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                
+                <div class="remember-forgot">
+                    <div class="remember-me">
+                        <input type="checkbox" id="remember">
+                        <label for="remember">Remember me</label>
+                    </div>
+                    <a href="#" class="forgot-password">Forgot Password?</a>
+                </div>
+                
+                <button type="submit" class="login-btn">Login <i class="fas fa-arrow-right"></i></button>
+            </form>
+            
+            <div class="demo-credentials">
+                <h4>Demo Credentials</h4>
+                <p>Username: <strong>admin</strong> | Password: <strong>123</strong></p>
+            </div>
+            
+            <div class="login-footer">
+                <p>Having trouble? <a href="#">Contact System Administrator</a></p>
+            </div>
+        </div>
+    </div>
+
+    <div class="admin-cursor" aria-hidden="true"></div>
+
+    <script>
+        // Add some interactivity
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.querySelector('.login-form');
+            const loginBtn = document.querySelector('.login-btn');
+            const adminCursor = document.querySelector('.admin-cursor');
+            const interactiveElements = document.querySelectorAll('button, input, a, .features li, .demo-credentials, .login-container');
+            
+            // Focus on username field when page loads
+            document.getElementById('username').focus();
+
+            window.addEventListener('mousemove', function(event) {
+                adminCursor.style.left = `${event.clientX}px`;
+                adminCursor.style.top = `${event.clientY}px`;
+            });
+
+            interactiveElements.forEach(function(element) {
+                element.addEventListener('mouseenter', function() {
+                    adminCursor.classList.add('cursor-active');
+                });
+
+                element.addEventListener('mouseleave', function() {
+                    adminCursor.classList.remove('cursor-active');
+                });
+            });
+            
+            // Add loading animation on form submit
+            loginForm.addEventListener('submit', function() {
+                loginBtn.innerHTML = 'Logging in... <i class="fas fa-spinner fa-spin"></i>';
+                loginBtn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

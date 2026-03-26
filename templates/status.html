@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Complaint Status | College Complaint Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background:
+                radial-gradient(circle at 12% 10%, rgba(244, 123, 32, 0.16), transparent 14%),
+                radial-gradient(circle at 84% 18%, rgba(255, 255, 255, 0.05), transparent 12%),
+                radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.04), transparent 18%),
+                linear-gradient(145deg, #000000 0%, #020202 38%, #080808 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 28px;
+            color: #eef4ff;
+            position: relative;
+            cursor: none;
+        }
+
+        body::before,
+        body::after {
+            content: "";
+            position: fixed;
+            width: 260px;
+            height: 260px;
+            border-radius: 50%;
+            filter: blur(24px);
+            pointer-events: none;
+            opacity: 0.32;
+        }
+
+        body::before {
+            top: 60px;
+            left: 40px;
+            background: rgba(244, 123, 32, 0.22);
+        }
+
+        body::after {
+            right: 30px;
+            bottom: 40px;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .status-container {
+            width: 100%;
+            max-width: none;
+            min-height: calc(100vh - 56px);
+            background:
+                linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0)),
+                rgba(6, 6, 6, 0.94);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 28px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.42);
+            backdrop-filter: blur(18px);
+            position: relative;
+        }
+
+        .status-container::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(0deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 42px 42px;
+            opacity: 0.18;
+            pointer-events: none;
+        }
+
+        .status-header {
+            background:
+                radial-gradient(circle at right top, rgba(244, 123, 32, 0.18), transparent 22%),
+                linear-gradient(135deg, rgba(10, 10, 10, 0.98), rgba(18, 18, 18, 0.98));
+            color: white;
+            padding: 42px 42px 34px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-header h1 {
+            font-size: clamp(2.4rem, 5vw, 3.6rem);
+            margin-bottom: 12px;
+            line-height: 1;
+            letter-spacing: -0.03em;
+            text-shadow: 0 14px 34px rgba(0, 0, 0, 0.34);
+        }
+
+        .status-header p {
+            font-size: 1.05rem;
+            max-width: 640px;
+            color: rgba(255, 232, 217, 0.86);
+        }
+
+        .status-badges {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 22px;
+        }
+
+        .status-badges span {
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #ffe1cb;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .status-content {
+            padding: 36px 42px 42px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1.15fr 0.85fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .search-section {
+            margin-bottom: 0;
+            background: linear-gradient(135deg, rgba(14, 14, 14, 0.98), rgba(20, 20, 20, 0.94));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .search-section::after {
+            content: "";
+            position: absolute;
+            inset: auto -40px -60px auto;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(244, 123, 32, 0.12), transparent 70%);
+            pointer-events: none;
+        }
+
+        .search-section h2 {
+            color: #fff2e8;
+            margin-bottom: 12px;
+            font-size: 1.8rem;
+        }
+
+        .section-label {
+            display: inline-flex;
+            margin-bottom: 14px;
+            padding: 8px 12px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #ffd2b2;
+            font-size: 0.8rem;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .search-section p {
+            color: #a9bdd7;
+            margin-bottom: 22px;
+            line-height: 1.7;
+        }
+
+        .search-form {
+            display: flex;
+            max-width: 100%;
+            margin: 0;
+            gap: 14px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.68);
+            color: #f4f8ff;
+        }
+
+        .search-input:focus {
+            border-color: #f47b20;
+            box-shadow: 0 0 0 4px rgba(244, 123, 32, 0.12);
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #f47b20, #ff9340);
+            color: white;
+            border: none;
+            padding: 0 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            box-shadow: 0 14px 28px rgba(244, 123, 32, 0.22);
+        }
+
+        .search-btn i {
+            margin-left: 8px;
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 18px 32px rgba(244, 123, 32, 0.28);
+        }
+
+        .feature-panel {
+            display: grid;
+            gap: 16px;
+        }
+
+        .feature-card {
+            padding: 22px;
+            border-radius: 22px;
+            background: linear-gradient(135deg, rgba(14, 14, 14, 0.98), rgba(24, 24, 24, 0.94));
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.2);
+            transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+        }
+
+        .feature-card i {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            margin-bottom: 14px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(244, 123, 32, 0.22), rgba(255, 255, 255, 0.08));
+            color: #ffffff;
+            font-size: 1.15rem;
+        }
+
+        .feature-card h3 {
+            color: #fff2e8;
+            margin-bottom: 8px;
+            font-size: 1.15rem;
+        }
+
+        .feature-card p {
+            color: #d6c3b6;
+            line-height: 1.7;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(244, 123, 32, 0.2);
+            box-shadow: 0 22px 36px rgba(0, 0, 0, 0.28);
+        }
+
+        .results-section {
+            display: {% if data %}block{% else %}none{% endif %};
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.98), rgba(19, 19, 19, 0.94));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            padding: 28px;
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.22);
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .results-section::before {
+            content: "";
+            position: absolute;
+            top: -60px;
+            right: -20px;
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(244, 123, 32, 0.12), transparent 68%);
+            pointer-events: none;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .results-header h3 {
+            color: #fff2e8;
+            font-size: 1.5rem;
+        }
+
+        .results-subtitle {
+            margin-top: 8px;
+            color: #cfb9ab;
+            font-size: 0.95rem;
+        }
+
+        .roll-number {
+            background: rgba(244, 123, 32, 0.12);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: #ffd2b2;
+            border: 1px solid rgba(244, 123, 32, 0.16);
+        }
+
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 10px 24px rgba(0, 0, 0, 0.14);
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            z-index: 1;
+        }
+
+        .status-table thead {
+            background: linear-gradient(135deg, #121212, #1d1d1d);
+            color: white;
+        }
+
+        .status-table th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .status-table tbody tr {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .status-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .status-table td {
+            padding: 18px 15px;
+            color: #f2e2d6;
+        }
+
+        .status-cell {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+            border: 1px solid transparent;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+            border-color: rgba(133, 100, 4, 0.14);
+        }
+
+        .status-in-progress {
+            background: #cce7ff;
+            color: #004085;
+            border-color: rgba(0, 64, 133, 0.12);
+        }
+
+        .status-resolved {
+            background: #d4edda;
+            color: #155724;
+            border-color: rgba(21, 87, 36, 0.12);
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #721c24;
+            border-color: rgba(114, 28, 36, 0.12);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 48px 32px;
+            color: #d6c3b6;
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.98), rgba(19, 19, 19, 0.94));
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            box-shadow: 0 18px 36px rgba(0, 0, 0, 0.22);
+            margin-bottom: 28px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .no-results::after {
+            content: "";
+            position: absolute;
+            inset: auto auto -50px -30px;
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(244, 123, 32, 0.1), transparent 68%);
+            pointer-events: none;
+        }
+
+        .no-results i {
+            font-size: 4rem;
+            color: rgba(244, 123, 32, 0.74);
+            margin-bottom: 20px;
+        }
+
+        .no-results h3 {
+            margin-bottom: 15px;
+            color: #fff2e8;
+        }
+
+        .help-section {
+            background: linear-gradient(135deg, rgba(12, 12, 12, 0.98), rgba(22, 22, 22, 0.94));
+            padding: 26px;
+            border-radius: 22px;
+            margin-top: 0;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.18);
+        }
+
+        .help-section h3 {
+            color: #ffffff;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .help-section h3 i {
+            margin-right: 10px;
+            color: #24c8db;
+        }
+
+        .help-section p {
+            color: #d7c6bb;
+            line-height: 1.6;
+        }
+
+        .status-cursor {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255, 214, 189, 0.9), rgba(255, 143, 71, 0.36) 58%, transparent 74%);
+            border: 1px solid rgba(255, 245, 237, 0.92);
+            box-shadow: 0 0 24px rgba(255, 143, 71, 0.34);
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+            z-index: 9999;
+        }
+
+        .status-cursor.cursor-active {
+            width: 42px;
+            height: 42px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.18), rgba(255, 143, 71, 0.22) 60%, transparent 78%);
+            border-color: rgba(255, 214, 189, 0.88);
+            box-shadow: 0 0 34px rgba(255, 159, 99, 0.36), 0 0 44px rgba(255, 143, 71, 0.18);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .status-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .status-container {
+                border-radius: 18px;
+                min-height: calc(100vh - 40px);
+            }
+            
+            .status-content {
+                padding: 20px;
+            }
+
+            .status-header {
+                padding: 28px 20px;
+            }
+            
+            .search-form {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                border-radius: 14px;
+            }
+            
+            .search-btn {
+                border-radius: 14px;
+                padding: 15px;
+            }
+            
+            .status-table {
+                display: block;
+                overflow-x: auto;
+            }
+            
+            .results-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .roll-number {
+                margin-top: 0;
+            }
+
+            .status-cursor {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="status-container">
+        <div class="status-header">
+            <h1>Check Complaint Status</h1>
+            <p>Track the progress of your submitted complaints</p>
+            <div class="status-badges">
+                <span>Live Tracking</span>
+                <span>Quick Search</span>
+                <span>Transparent Updates</span>
+            </div>
+        </div>
+        
+        <div class="status-content">
+            <div class="status-grid">
+                <div class="search-section">
+                    <span class="section-label">Status Search</span>
+                    <h2>Enter Your Roll Number</h2>
+                    <form method="POST" class="search-form">
+                        <input type="text" name="roll" class="search-input" placeholder="Enter your roll number" required>
+                        <button type="submit" class="search-btn">Check Status <i class="fas fa-search"></i></button>
+                    </form>
+                </div>
+
+                <div class="feature-panel">
+                    <div class="feature-card">
+                        <i class="fas fa-clock"></i>
+                        <h3>Fast Status Lookup</h3>
+                        <p>Check complaint updates in seconds with a clean and direct search flow.</p>
+                    </div>
+                    <div class="feature-card">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3>Secure Complaint View</h3>
+                        <p>Your complaint records stay structured, easy to read, and visible in one place.</p>
+                    </div>
+                </div>
+            </div>
+            
+            {% if data %}
+            <div class="results-section">
+                <div class="results-header">
+                    <div>
+                        <h3>Complaint Status</h3>
+                        <p class="results-subtitle">Latest complaint records linked to your roll number</p>
+                    </div>
+                    <div class="roll-number">Roll No: {{ roll }}</div>
+                </div>
+                
+                <table class="status-table">
+                    <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Description</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in data %}
+                        <tr>
+                            <td>{{ row[0] }}</td>
+                            <td>{{ row[1] }}</td>
+                            <td>
+                                <span class="status-cell status-{{ row[2]|lower|replace(' ', '-') }}">{{ row[2] }}</span>
+                            </td>
+                            <td>{{ row[3] }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="no-results">
+                <i class="fas fa-search"></i>
+                <h3>No Results to Display</h3>
+                <p>Enter your roll number to check the status of your complaints</p>
+            </div>
+            {% endif %}
+            
+            <div class="help-section">
+                <h3><i class="fas fa-info-circle"></i> Need Help?</h3>
+                <p>If you're having trouble finding your complaint status or if there's an issue with the information displayed, please contact the administration office or send an email to complaints@kit.ac.in.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="status-cursor" aria-hidden="true"></div>
+
+    <script>
+        // Add some interactivity to the page
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchForm = document.querySelector('.search-form');
+            const searchInput = document.querySelector('.search-input');
+            const statusCursor = document.querySelector('.status-cursor');
+            const interactiveElements = document.querySelectorAll('button, input, .feature-card, .status-container, .status-cell, .roll-number');
+            
+            // Focus on the input field when page loads
+            searchInput.focus();
+
+            window.addEventListener('mousemove', function(event) {
+                statusCursor.style.left = `${event.clientX}px`;
+                statusCursor.style.top = `${event.clientY}px`;
+            });
+
+            interactiveElements.forEach(function(element) {
+                element.addEventListener('mouseenter', function() {
+                    statusCursor.classList.add('cursor-active');
+                });
+
+                element.addEventListener('mouseleave', function() {
+                    statusCursor.classList.remove('cursor-active');
+                });
+            });
+            
+            // Add animation to the form on submit
+            searchForm.addEventListener('submit', function() {
+                const btn = this.querySelector('.search-btn');
+                btn.innerHTML = 'Checking... <i class="fas fa-spinner fa-spin"></i>';
+                btn.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

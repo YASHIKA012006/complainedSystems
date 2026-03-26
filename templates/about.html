@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About | College Complaint Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="{{ url_for('static', filename='about.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand">
+        <span class="brand-icon"><i class="fas fa-building-columns"></i></span>
+        <h1>Complaint Portal</h1>
+      </div>
+      <a href="{{ url_for('home') }}" class="back-home"><i class="fas fa-arrow-left"></i> Back to Home</a>
+    </div>
+  </header>
+
+  <main class="team-section">
+    <div class="container">
+      <div class="section-intro">
+        <span class="section-badge"><i class="fas fa-users"></i> The Team</span>
+        <h2>Built by ABITHIVE</h2>
+        <p>A passionate team dedicated to improving student life through technology.</p>
+      </div>
+
+      <div class="team-grid">
+        <article class="team-card">
+          <div class="team-icon"><i class="fas fa-user-tie"></i></div>
+          <h3>Team Lead</h3>
+          <p>Project Architecture & Backend</p>
+        </article>
+
+        <article class="team-card">
+          <div class="team-icon"><i class="fas fa-paint-brush"></i></div>
+          <h3>UI/UX Designer</h3>
+          <p>Frontend & User Experience</p>
+        </article>
+
+        <article class="team-card">
+          <div class="team-icon"><i class="fas fa-database"></i></div>
+          <h3>Database Engineer</h3>
+          <p>Data Modeling & Optimization</p>
+        </article>
+      </div>
+    </div>
+  </main>
+
+  <div class="about-cursor" aria-hidden="true"></div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const aboutCursor = document.querySelector('.about-cursor');
+      const interactiveElements = document.querySelectorAll('a, .team-card, .team-icon, .section-badge');
+
+      window.addEventListener('mousemove', function(event) {
+        aboutCursor.style.left = `${event.clientX}px`;
+        aboutCursor.style.top = `${event.clientY}px`;
+      });
+
+      interactiveElements.forEach(function(element) {
+        element.addEventListener('mouseenter', function() {
+          aboutCursor.classList.add('cursor-hover');
+        });
+
+        element.addEventListener('mouseleave', function() {
+          aboutCursor.classList.remove('cursor-hover');
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campus Complaint Portal</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="navbar">
+                <a href="#home" class="logo">CampusVoice</a>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#complaint-form">Raise Complaint</a></li>
+                    <li><a href="{{ url_for('status') }}">Track Status</a></li>
+                    <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+                    <li><a href="{{ url_for('about') }}">About</a></li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <section class="hero" id="home">
+        <div class="container hero-layout">
+            <div class="hero-panel">
+                <div class="panel-card panel-main">
+                    <div class="hero-copy">
+                        <span class="hero-kicker">Complaint Management Portal</span>
+                        <h1>
+                            <span class="hero-title-top">Online</span>
+                            <span class="hero-title-bottom">Complaint Portal</span>
+                        </h1>
+                        <p>The only place where your complaints are handled with clarity, fast response, and the right support.</p>
+                        <div class="hero-heading-points">
+                            <span>Fast Response</span>
+                            <span>Smart Tracking</span>
+                            <span>Clean Workflow</span>
+                        </div>
+                        <div class="hero-actions">
+                            <a href="#complaint-form" class="btn btn-primary-custom">Submit Complaint</a>
+                            <a href="{{ url_for('status') }}" class="btn btn-secondary-custom">Track Complaint</a>
+                        </div>
+                        <div class="hero-service-card">
+                            <strong>24/7 Service</strong>
+                            <span>Always available for complaint support</span>
+                        </div>
+                    </div>
+                    <div class="hero-art">
+                        <img src="{{ url_for('static', filename='kit.jpg') }}" alt="Student complaint portal illustration" class="hero-image">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="form-section" id="complaint-form">
+        <div class="container">
+            <div class="section-heading">
+                <span class="eyebrow">Complaint Desk</span>
+                <h2>Submit your complaint</h2>
+                <p>Fill in the details below so the concerned team can review and address your issue properly.</p>
+            </div>
+
+            <div class="complaint-panel">
+                <div class="complaint-visual">
+                    <div class="visual-card">
+                        <span class="visual-badge">Complaint Flow</span>
+                        <h3>Report. Review. Resolve.</h3>
+                        <p>Share your concern and let the right team handle it with clarity.</p>
+                    </div>
+                    <div class="complaint-illustration" aria-hidden="true">
+                        <svg viewBox="0 0 420 320" role="img">
+                            <defs>
+                                <linearGradient id="cardGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#24c8db" />
+                                    <stop offset="100%" stop-color="#8b5cf6" />
+                                </linearGradient>
+                            </defs>
+                            <rect x="70" y="36" width="280" height="220" rx="26" fill="#0c1628" stroke="url(#cardGlow)" stroke-width="3"/>
+                            <rect x="105" y="74" width="150" height="18" rx="9" fill="#1a314f"/>
+                            <rect x="105" y="110" width="210" height="14" rx="7" fill="#15304b"/>
+                            <rect x="105" y="136" width="180" height="14" rx="7" fill="#15304b"/>
+                            <rect x="105" y="162" width="160" height="14" rx="7" fill="#15304b"/>
+                            <rect x="105" y="198" width="110" height="30" rx="15" fill="url(#cardGlow)"/>
+                            <circle cx="320" cy="84" r="34" fill="#101f35" stroke="#35f2c1" stroke-width="3"/>
+                            <path d="M305 84h30M320 69v30" stroke="#35f2c1" stroke-width="4" stroke-linecap="round"/>
+                            <path d="M334 227c22 0 40 18 40 40H266c0-22 18-40 40-40h28z" fill="#101f35" stroke="#24c8db" stroke-width="3"/>
+                            <circle cx="320" cy="208" r="20" fill="#101f35" stroke="#8b5cf6" stroke-width="3"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <form method="POST" action="/submit">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Your Name</label>
+                                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="roll">Roll Number</label>
+                                <input type="text" id="roll" name="roll" placeholder="Enter your roll number" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="email">Email Address</label>
+                                <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="branch">Department / Branch</label>
+                                <input type="text" id="branch" name="branch" placeholder="Enter your department or branch" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="year">Year / Semester</label>
+                                <input type="text" id="year" name="year" placeholder="Enter your year or semester" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="category">Complaint Category</label>
+                                <select id="category" name="category" required>
+                                    <option value="">-- Select Category --</option>
+                                    <option value="Academic">Academic</option>
+                                    <option value="Facility">Facility</option>
+                                    <option value="Hostel">Hostel</option>
+                                    <option value="Transport">Transport</option>
+                                    <option value="Sports and Games">Sports and Games</option>
+                                    <option value="Ragging">Ragging</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description">Describe Your Complaint</label>
+                            <textarea id="description" name="description" placeholder="Please provide complete details of the issue, including location, timing, and any important context." rows="5" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary-custom w-100">Submit Complaint</button>
+                    </form>
+
+                    <a href="{{ url_for('status') }}" class="status-link">Track an existing complaint</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section footer-brand">
+                    <h3>CampusVoice</h3>
+                    <p>Modern complaint management for students and administrators.</p>
+                    <div class="footer-badges">
+                        <span>Fast Access</span>
+                        <span>Secure Flow</span>
+                        <span>Status Tracking</span>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#complaint-form">Raise Complaint</a></li>
+                        <li><a href="{{ url_for('status') }}">Track Status</a></li>
+                        <li><a href="{{ url_for('about') }}">About Portal</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul class="footer-links">
+                        <li><a href="{{ url_for('admin_login') }}">Admin Login</a></li>
+                        <li><a href="{{ url_for('status') }}">Complaint Status</a></li>
+                        <li><a href="#complaint-form">Submit Request</a></li>
+                        <li><a href="{{ url_for('about') }}">Portal Guide</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul class="footer-meta">
+                        <li>Email: support@campusvoice.edu</li>
+                        <li>Help Desk: Mon - Sat</li>
+                        <li>Response Window: 24-48 Hours</li>
+                    </ul>
+                    <div class="footer-socials">
+                        <a href="#">Fb</a>
+                        <a href="#">In</a>
+                        <a href="#">X</a>
+                        <a href="#">Li</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2025 CampusVoice. Privacy Policy | Terms | Support</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="cursor-glow" aria-hidden="true"></div>
+
+    <script>
+        const cursorGlow = document.querySelector('.cursor-glow');
+        const interactiveElements = document.querySelectorAll('a, button, .btn, input, select, textarea, .highlight-card, .info-box, .feature-pill, .trust-card, .panel-card, .metric-chip');
+
+        window.addEventListener('mousemove', (event) => {
+            cursorGlow.style.left = `${event.clientX}px`;
+            cursorGlow.style.top = `${event.clientY}px`;
+        });
+
+        interactiveElements.forEach((element) => {
+            element.addEventListener('mouseenter', () => {
+                cursorGlow.classList.add('cursor-hover');
+            });
+
+            element.addEventListener('mouseleave', () => {
+                cursorGlow.classList.remove('cursor-hover');
+            });
+        });
+    </script>
+</body>
+</html>
